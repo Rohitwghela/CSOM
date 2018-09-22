@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Online.SharePoint.Client.Tenant.dll</id>
+    <version>15.0.4615.1001</version>
+    <title>Microsoft.Online.SharePoint.Client.Tenant.dll</title>
+    <authors>faisal</authors>
+    <owners>faisal</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Represents a SharePoint Online tenant.</description>
+    <summary />
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Sharepoint</tags>
+  </metadata>
+</package>
