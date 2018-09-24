@@ -24,13 +24,94 @@ namespace CSOM1
             //string userName = "";
             //var password = "";
 
+
             SecureString secPassword = GetPasswordFromConsoleInput(password);
             ClientContext context = new ClientContext(siteUrl);
             context.Credentials = new SharePointOnlineCredentials(userName, secPassword);
 
             //p.GetSiteTitle(context);
             //p.CreateSiteColumn(context);
-            p.CreateContentType(context);
+            //p.CreateContentType(context);
+            p.DeleteContentTypeCode(context);
+            //p.ContentTypeCode(context);
+        }
+
+        private void DeleteContentTypeCode(ClientContext context)
+        {
+            
+            Web rootWeb = context.Site.RootWeb;
+            ContentTypeCollection ctCollection = rootWeb.ContentTypes;
+            context.Load(ctCollection);
+            context.ExecuteQuery();
+
+            foreach (ContentType c in ctCollection)
+            {
+                if (c.Name == "CT1")
+                {
+                    //cid = c.Id;
+                }
+            }
+
+            ContentType ct = context.Web.ContentTypes.GetById(cid.ToString());
+
+            
+        }
+
+        private void ContentTypeCode(ClientContext context)
+        {
+            Guid guid = Guid.NewGuid();
+            try
+            {
+                Web rootWeb = context.Site.RootWeb;
+                var field1 = rootWeb.Fields.AddFieldAsXml("<Field DisplayName='TestSiteColumn' Name='SessionName' ID='" + guid + "' Type='Text' />", false, AddFieldOptions.AddFieldInternalNameHint);
+                //context.ExecuteQuery();
+
+                ContentTypeCollection ctCollection = context.Web.ContentTypes;
+                context.Load(ctCollection);
+                context.ExecuteQuery();
+
+                // create by reference
+                //ContentType itemContentTypes = context.LoadQuery(rootWeb.ContentTypes.Where(ct => ct.Name == "Item"));
+
+                ContentType itemContentTypes = ctCollection.GetById("0x0101");
+                context.ExecuteQuery();
+                ContentTypeCreationInformation cti = new ContentTypeCreationInformation();
+                cti.Name = "CT1";
+                cti.Description = "test content type CSOM";
+                cti.ParentContentType = itemContentTypes;
+                cti.Group = "RohitCustomCT";
+                ContentType myContentType = ctCollection.Add(cti);
+                context.ExecuteQuery();
+                //myContentType.Fields.Add(field1);
+                myContentType.FieldLinks.Add(new FieldLinkCreationInformation
+                {
+                    Field = field1
+                });
+                myContentType.Update(true);
+                context.ExecuteQuery();
+
+
+                ListCreationInformation lct = new ListCreationInformation();
+                lct.Title = "LogList";
+                lct.Description = "this is test list";
+                lct.TemplateType = (int)ListTemplateType.GenericList;
+                List logList = context.Web.Lists.Add(lct);
+                context.Load(logList);
+                context.ExecuteQuery();
+
+                if (!logList.ContentTypesEnabled)
+                {
+                    logList.ContentTypesEnabled = true;
+                    logList.Update();
+                    context.ExecuteQuery();
+                }
+                logList.ContentTypes.AddExistingContentType(myContentType);
+                context.ExecuteQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in CreateSiteColumn :  " + ex.Message.ToString());
+            }
         }
 
         private void CreateContentType(ClientContext context)
